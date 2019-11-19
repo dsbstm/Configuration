@@ -1,0 +1,285 @@
+"================================================================
+" Basic keymaps
+"================================================================
+
+source ~/.vimrc.keymap
+
+"================================================================
+" Plugins
+"================================================================
+call plug#begin()
+
+Plug 'tpope/vim-surround'
+Plug 'w0ng/vim-hybrid'
+Plug 'itchyny/lightline.vim'
+
+" ========== Unite.vim ==========
+Plug 'Shougo/unite.vim'
+let g:unite_enable_start_insert=1
+nnoremap <silent> <Leader>f :<C-u>UniteWithBufferDir -buffer-name=files file<CR>
+" 大文字小文字を区別しない  
+let g:unite_enable_ignore_case = 1  
+let g:unite_enable_smart_case = 1
+" ESCキーを2回押すと終了する  
+au FileType unite nnoremap <silent> <buffer> <ESC><ESC> :q<CR>
+au FileType unite inoremap <silent> <buffer> <ESC><ESC> <ESC>:q<CR>
+
+" grep
+nnoremap <silent> <Leader>g  :<C-u>Unite grep:! -buffer-name=search-buffer<CR>
+nnoremap <silent> <Leader>G  :<C-u>Unite grep:! -buffer-name=search-buffer<CR>
+if executable('ag')
+  let g:unite_source_grep_command = 'ag'
+  let g:unite_source_grep_default_opts = '--nogroup --nocolor --column --smart-case --hidden -U'
+  let g:unite_source_grep_recursive_opt = ''
+endif
+
+" file_rec
+" \(static\)/\*\)\|\(\.\(gif\|jpe\?g\|png\|webp\|pdf\|swp\|bak\|old\|pem\)$
+let s:unite_ignore_extentions = [
+            \'o',
+            \'exe',
+            \'dll',
+            \'pem',
+            \'ipa',
+            \'bak',
+            \'sw[po]',
+            \'class',
+            \'pdf',
+            \'png',
+            \'jpe\?g',
+            \'webp',
+            \'dat',
+            \]
+let s:unite_ignore_directories = [
+            \'\.hg',
+            \'\.git',
+            \'\.bzr',
+            \'static',
+            \'\.svn',
+            \'tags\%(-.*\)\?',
+            \'node_modules',
+            \]
+let s:unite_ignore_patterns= 
+            \'\%(^\|/\)\.$\|\~$\|\.\%('.join(s:unite_ignore_extentions, '\|').'\)$\|\%(^\|/\)\%(\'.join(s:unite_ignore_directories, '\|').'\)\%($\|/\)'
+            "'\%(^\|/\)\.$\|\~$\|\.\%(o\|exe\|dll\|pem\|ipa\|bak\|sw[po]\|class\|pdf\|png\|jpe\?g\|webp\)$\|\%(^\|/\)\%(\.hg\|\.git\|\.bzr\|static\|\.svn\|tags\%(-.*\)\?\)\%($\|/\)'
+
+" search in file
+nnoremap <silent> <Leader>s :<C-u>Unite -buffer-name=search line<CR>
+
+" lexima
+Plug 'cohama/lexima.vim'
+let g:lexima_no_default_rules = 1
+autocmd BufReadPost * call lexima#set_default_rules()
+autocmd BufReadPost * call lexima#insmode#map_hook('before', '<CR>', '')
+
+" ========== neocomplcache ==========
+Plug 'Shougo/neocomplcache'
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplcache.
+let g:neocomplcache_enable_at_startup = 1
+" Use smartcase.
+let g:neocomplcache_enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplcache_min_syntax_length = 2
+let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+let g:neocomplcache_enable_auto_select = 1
+inoremap <expr><CR>  pumvisible() ? neocomplcache#close_popup() : "<CR>"
+
+"
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+
+"
+Plug 'haya14busa/incsearch.vim'
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+"
+Plug 'plasticboy/vim-markdown'
+Plug 'previm/previm'
+let g:vim_markdown_folding_disabled = 1
+Plug 'tyru/open-browser.vim'
+let g:previm_custom_css_path = '~/.dotfiles/vim/markdown_custom.css'
+augroup PrevimSettings
+    autocmd!
+    autocmd BufNewFile,BufRead *.{md,mdwn,mkd,mkdn,mark*} set filetype=markdown
+augroup END
+
+" fzf
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
+Plug 'tweekmonster/fzf-filemru'
+nnoremap <silent> <Leader>e  :<C-u>Files<CR>
+
+Plug 'Shougo/neomru.vim'
+nnoremap <silent> <Leader>b :<C-u>Unite buffer file_mru<CR>
+
+Plug 'jszakmeister/vim-togglecursor'
+
+"Plug 'vim-syntastic/syntastic'
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+
+Plug 'easymotion/vim-easymotion'
+nmap f <Plug>(easymotion-s2)
+vmap f <Plug>(easymotion-s2)
+
+Plug 'scrooloose/nerdtree'
+
+call plug#end()
+
+call unite#custom#source('file_rec/async', 'ignore_pattern', s:unite_ignore_patterns)
+
+"================================================================
+" basic settings
+"================================================================
+
+"
+syntax enable
+filetype plugin indent on
+set cursorline
+set number
+
+set wildmode=longest,full
+
+" search settings
+set hlsearch
+set ignorecase
+set smartcase
+
+set showmatch
+
+set list           " 不可視文字を表示
+set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮    " 不可視文字の表示記号指定
+
+set mouse=a
+
+if has('mac')
+    set clipboard=unnamed,autoselect
+elseif has('unix')
+    set clipboard=unnamedplus
+endif
+
+set visualbell
+
+set scrolloff=8                " 上下8行の視界を確保
+set sidescrolloff=16           " 左右スクロール時の視界を確保
+set sidescroll=1               " 左右スクロールは一文字づつ行う
+
+" indent settings
+set autoindent
+set smartindent
+
+set expandtab
+set tabstop=4
+set softtabstop=4
+set shiftwidth=4
+
+set splitright
+set splitbelow
+
+set showcmd
+set showmode
+set laststatus=2
+set cmdheight=2
+set ruler
+
+" file settings
+set confirm
+set hidden
+set autoread
+augroup vimrc-checktime
+  autocmd!
+  autocmd WinEnter * checktime
+augroup END
+set noswapfile
+set nobackup
+
+" allow to create new line in INSERT mode
+set bs=start,indent
+set backspace=indent,eol,start
+
+" do not stop cursor at an end of line
+set whichwrap=b,s,h,l,<,>,[,],~
+
+" change cursor shape when insert mode
+if exists("$TMUX")
+  autocmd InsertEnter * : silent exec "!printf '\033]50;CursorShape=2\x7'" | exec ":redraw!"
+  autocmd InsertLeave * : silent exec "!printf '\033]50;CursorShape=0\x7'" | exec ":redraw!"
+elseif &term =~ "screen"
+  let &t_SI = "\eP\e]50;CursorShape=1\x7\e\\"
+  let &t_EI = "\eP\e]50;CursorShape=0\x7\e\\"
+elseif &term =~ "xterm"
+  let &t_SI = "\e]50;CursorShape=1\x7"
+  let &t_EI = "\e]50;CursorShape=0\x7"
+endif
+
+" indent settings
+autocmd FileType json setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType yaml setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType yml  setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType xml  setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType sh   setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType zsh  setlocal shiftwidth=2 tabstop=2 softtabstop=2
+autocmd FileType rb   setlocal shiftwidth=2 tabstop=2 softtabstop=2
+
+autocmd BufNewFile,BufRead *.tx setlocal filetype=html
+autocmd FileType html :setlocal indentexpr=""
+
+" use hard tab when Makefile
+let _curfile=expand("%:r")
+if _curfile == 'Makefile' || _curfile == 'makefile'
+  set noexpandtab
+endif
+
+"
+augroup vimrc-checktime
+  autocmd!
+  autocmd WinEnter * checktime
+augroup END
+
+augroup HighlightTrailingSpaces
+  autocmd!
+  autocmd VimEnter,WinEnter,ColorScheme * highlight TrailingSpaces term=underline guibg=Red ctermbg=Red
+  autocmd VimEnter,WinEnter * match TrailingSpaces /\s\+$/
+augroup END
+
+"================================================================
+" Color settings
+"================================================================
+
+set background=dark
+colorscheme hybrid
+"
+" highlights
+hi MatchParen term=standout ctermbg=blue ctermfg=white
+hi SpellBad ctermbg=Red
+hi SpellCap ctermbg=Yellow
+
+if &term =~ "xterm-256color" || "screen-256color"
+  set t_Co=256
+  set t_Sf=[3%dm
+  set t_Sb=[4%dm
+elseif &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
+  set t_Co=16
+  set t_Sf=[3%dm
+  set t_Sb=[4%dm
+elseif &term =~ "xterm-color"
+  set t_Co=8
+  set t_Sf=[3%dm
+  set t_Sb=[4%dm
+endif
+
+hi Search guibg=peru guifg=wheat
+hi Search cterm=NONE ctermfg=grey ctermbg=blue
+
+"================================================================
+" Others
+"================================================================
+
