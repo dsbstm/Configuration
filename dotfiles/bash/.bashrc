@@ -130,4 +130,5 @@ alias oldvim="\vim"
 alias vimdiff='nvim -d'
 export EDITOR=nvim
 
-
+#Fix dircolors
+export LS_COLORS=$(echo $LS_COLORS | sed "s/ow=34;42/ow=01;34/g")
