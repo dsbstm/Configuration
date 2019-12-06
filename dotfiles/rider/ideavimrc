@@ -48,3 +48,12 @@ vnoremap f :<C-u>action AceAction<CR>
 
 nnoremap ,r :<C-u>action RecentFiles<CR>
 nnoremap gt :<C-u>action GotoTest<CR>
+
+" easy system clipboard copy/paste
+noremap <leader>y "*y
+noremap <leader>yy "*Y
+noremap <leader>p "*p
+noremap <leader>P "*P
+
+" enable hybrid line numbers
+set number! relativenumber!
