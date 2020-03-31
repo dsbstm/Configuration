@@ -57,3 +57,11 @@ noremap <leader>P "*P
 
 " enable hybrid line numbers
 set number! relativenumber!
+
+"Debugging shortcuts 
+nnoremap ,b:<C-u>action ToggleLineBreakpoint
+
+" built in search looks better
+nnoremap / :action Find<CR>
+" but preserve ideavim search
+nnoremap <Leader>/ /
